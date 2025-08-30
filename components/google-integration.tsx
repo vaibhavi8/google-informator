@@ -10,7 +10,7 @@ export default function GoogleIntegrationPanel() {
   const googleIntegrationEnabled = useToolsStore((s) => s.googleIntegrationEnabled);
 
   useEffect(() => {
-    fetch("/api/google/status")
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/google/status`)
       .then((r) => r.json())
       .then((d) => {
         setConnected(Boolean(d.connected));
@@ -28,7 +28,7 @@ export default function GoogleIntegrationPanel() {
         <div className="space-y-2">
           {oauthConfigured ? (
             googleIntegrationEnabled ? (
-              <a href="/api/google/auth">
+              <a href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/google/auth`}>
                 <Button>Connect Google Integration</Button>
               </a>
             ) : (

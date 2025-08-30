@@ -79,16 +79,19 @@ export const handleTurn = async (
 ) => {
   try {
     const { googleIntegrationEnabled } = useToolsStore.getState();
-    // Get response from the API (defined in app/api/turn_response/route.ts)
-    const response = await fetch("/api/turn_response", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        messages: messages,
-        tools: tools,
-        googleIntegrationEnabled,
-      }),
-    });
+    // Get response from the FastAPI backend
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/chat`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: messages,
+          tools: tools,
+          googleIntegrationEnabled,
+        }),
+      }
+    );
 
     if (!response.ok) {
       console.error(`Error: ${response.status} - ${response.statusText}`);

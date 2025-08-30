@@ -26,7 +26,7 @@ export default function ContextPanel() {
   const [oauthConfigured, setOauthConfigured] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    fetch("/api/google/status")
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/google/status`)
       .then((r) => r.json())
       .then((d) => setOauthConfigured(Boolean(d.oauthConfigured)))
       .catch(() => setOauthConfigured(false));

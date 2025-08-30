@@ -42,7 +42,7 @@ const Message: React.FC<MessageProps> = ({ message }) => {
                     .map((a, i) => (
                       <img
                         key={i}
-                        src={`/api/container_files/content?file_id=${a.fileId}${a.containerId ? `&container_id=${a.containerId}` : ""}${a.filename ? `&filename=${encodeURIComponent(a.filename)}` : ""}`}
+                        src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/container_files/content?file_id=${a.fileId}${a.containerId ? `&container_id=${a.containerId}` : ""}${a.filename ? `&filename=${encodeURIComponent(a.filename)}` : ""}`}
                         alt={a.filename || ""}
                         className="mt-2 max-w-full"
                       />

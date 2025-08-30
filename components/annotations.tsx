@@ -37,7 +37,7 @@ const AnnotationPill = ({ annotation }: { annotation: Annotation }) => {
     case "container_file_citation":
       return (
         <a
-          href={`/api/container_files/content?file_id=${annotation.fileId}${annotation.containerId ? `&container_id=${annotation.containerId}` : ""}${annotation.filename ? `&filename=${encodeURIComponent(annotation.filename)}` : ""}`}
+          href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/container_files/content?file_id=${annotation.fileId}${annotation.containerId ? `&container_id=${annotation.containerId}` : ""}${annotation.filename ? `&filename=${encodeURIComponent(annotation.filename)}` : ""}`}
           download
           className={`${className} flex items-center gap-1`}
         >

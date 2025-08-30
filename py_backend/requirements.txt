@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+openai
+requests
+sse-starlette
+python-dotenv
+authlib
