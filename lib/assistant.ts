@@ -80,16 +80,24 @@ export const handleTurn = async (
   try {
     const { googleIntegrationEnabled } = useToolsStore.getState();
     // Get response from the FastAPI backend
+    // Extract the latest user message as prompt
+    let prompt = "";
+    if (messages && messages.length > 0) {
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg.role === "user") {
+        if (typeof lastMsg.content === "string") {
+          prompt = lastMsg.content;
+        } else if (Array.isArray(lastMsg.content) && lastMsg.content.length > 0 && lastMsg.content[0].text) {
+          prompt = lastMsg.content[0].text;
+        }
+      }
+    }
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/chat`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: messages,
-          tools: tools,
-          googleIntegrationEnabled,
-        }),
+        body: JSON.stringify({ prompt }),
       }
     );
 
@@ -98,42 +106,26 @@ export const handleTurn = async (
       return;
     }
 
-    // Reader for streaming data
-    const reader = response.body!.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
-    let buffer = "";
-
-    while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      const chunkValue = decoder.decode(value);
-      buffer += chunkValue;
-
-      const lines = buffer.split("\n\n");
-      buffer = lines.pop() || "";
-
-      for (const line of lines) {
-        if (line.startsWith("data: ")) {
-          const dataStr = line.slice(6);
-          if (dataStr === "[DONE]") {
-            done = true;
-            break;
-          }
-          const data = JSON.parse(dataStr);
-          onMessage(data);
-        }
-      }
+    // Debug: log the raw response for troubleshooting
+    const rawText = await response.text();
+    console.log("Raw backend response:", rawText);
+    // Try to parse as JSON
+    let parsed;
+    try {
+      parsed = JSON.parse(rawText);
+      console.log("Parsed backend response:", parsed);
+    } catch (e) {
+      console.error("Failed to parse backend response as JSON", e);
+      return;
+    }
+    // If the response contains a 'reply' key, call onMessage
+    if (parsed.reply) {
+      onMessage({ event: "response.output_text.delta", data: { delta: parsed.reply, item_id: "ollama" } });
+      return;
     }
 
-    // Handle any remaining data in buffer
-    if (buffer && buffer.startsWith("data: ")) {
-      const dataStr = buffer.slice(6);
-      if (dataStr !== "[DONE]") {
-        const data = JSON.parse(dataStr);
-        onMessage(data);
-      }
-    }
+    // For /chat endpoint, use simple JSON parsing
+    // (already handled above)
   } catch (error) {
     console.error("Error handling turn:", error);
   }
@@ -188,7 +180,8 @@ export const processMessages = async () => {
             ],
           } as MessageItem);
         } else {
-          const contentItem = lastItem.content[0];
+          // Only access content if lastItem is a MessageItem
+          const contentItem = (lastItem as MessageItem).content[0];
           if (contentItem && contentItem.type === "output_text") {
             contentItem.text = assistantMessageContent;
             if (annotation) {
