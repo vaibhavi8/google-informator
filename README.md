@@ -101,7 +101,7 @@ This starter app includes a built-in Google integration that lets the assistant 
    npm run dev
    ```
 
-### Demo flow
+### App flow
 
 - Click "Connect Google Integration" in the UI and complete the OAuth flow; you will be redirected back with `connected=1`.
 - Ask the assistant to perform tasks—for example, "Show my next five calendar events," or, "Summarize the most recent wirecutter emails".
