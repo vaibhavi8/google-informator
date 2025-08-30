@@ -5,10 +5,13 @@ from files import router as files_router
 from utils import router as utils_router
 from chat import router as chat_router
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
+
 
 
 app = FastAPI()
 
+app.add_middleware(SessionMiddleware, secret_key="asdfAfJNKF023Fdfn")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],  # Frontend origin
