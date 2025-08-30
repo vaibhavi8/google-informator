@@ -21,12 +21,7 @@ This app is meant to be used as a starting point to build a conversational assis
 
 ## How to use
 
-1. **Set up the OpenAI API:**
-
-   - If you're new to the OpenAI API, [sign up for an account](https://platform.openai.com/signup).
-   - Follow the [Quickstart](https://platform.openai.com/docs/quickstart) to retrieve your API key.
-
-2. **Set the OpenAI API key:**
+1. **Set the OpenAI API key:**
 
    2 options:
 
@@ -37,21 +32,34 @@ This app is meant to be used as a starting point to build a conversational assis
    OPENAI_API_KEY=<your_api_key>
    ```
 
-3. **Clone the Repository:**
+2. **Clone the Repository:**
 
    ```bash
    git clone https://github.com/openai/openai-responses-starter-app.git
    ```
 
-4. **Install dependencies:**
+3. **Install dependencies:**
 
    Run in the project root:
 
    ```bash
    npm install
    ```
+4. **Create a virtual enviornment and install Python libraries**
 
-5. **Run the app:**
+   Run in py_backend:
+   ```
+   cd py_backend
+   python3.13 -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirments.txt
+   ```
+5. **Run the backend**
+   ```
+   .venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
+   ```
+
+6. **Run the app:**
 
    ```bash
    npm run dev
